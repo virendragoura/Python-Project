@@ -1,36 +1,32 @@
-import pandas as pd
-import requests
-from bs4 import BeautifulSoup
+from instabot import Bot
+import time
 
-Product_name = []
-Prices = []
-Description = []
-Reviews = []
+bot = Bot()
 
-for i in range(2,40):  
-    url = "https://www.flipkart.com/search?q=moblile+under+50000&otracker=search&otracker1=search&marketplace=FLIPKART&as-show=on&as=off&page=" + str(i)
+# Login to Instagram
+bot.login(username="veergoura", password="123456")
 
-    r = requests.get(url)
-    soup = BeautifulSoup(r.text, "lxml")
 
-    boxes = soup.find_all("div", class_="DOjaWF gdgoEp")
+# Follow a user
+bot.follow("virendragoura")
+time.sleep(5)  # Give Instagram time to process
 
-    for box in boxes:
-        name = box.find("div", class_="KzDlHZ")
-        price = box.find("div", class_="Nx9bqj _4b5DiR")
-        desc = box.find("ul", class_="G4BRas")
-        review = box.find("div", class_="XQDdHH")  # Some products may not have reviews
+# Unfollow a user
+bot.unfollow("yoozax")
+time.sleep(5)
 
-        # Append data, ensuring all lists have the same length
-        Product_name.append(name.text if name else "N/A")
-        Prices.append(price.text if price else "N/A")
-        Description.append(desc.text if desc else "N/A")
-        Reviews.append(review.text if review else "N/A")  # Handle missing reviews
+# Send a message (ensure target is in a list)
+bot.send_message("Hello! This is an automated message.", ["virendragoura"])
+time.sleep(5)
 
-# Print lengths to verify they are the same
-print(len(Product_name), len(Prices), len(Description), len(Reviews))
+# Upload a post (image with caption)
+bot.upload_photo("Linkedin_Virendra.jpg", caption="This is an automated post! 🚀")
+time.sleep(5)
 
-# Create DataFrame
-df = pd.DataFrame({"Product Name": Product_name, "Prices": Prices, "Description": Description, "Reviews": Reviews})
-#print(df)
-df.to_csv("flipkart_mobile_under_50k.csv")
+# Get list of followers
+followers = bot.get_user_followers("virendragoura")
+for follower in followers:
+    print(bot.get_user_info(follower))
+    
+# Logout
+bot.logout()
